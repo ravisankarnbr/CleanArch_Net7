@@ -1,18 +1,27 @@
+using CleanArch.Infra.IOC;
 using CleanArch.MVC.Data;
+using ClearArch.Infra.Data.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var IdentityconnectionString = builder.Configuration.GetConnectionString("UnivIdentityConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(IdentityconnectionString));
+
+var UnivDBconnectionString = builder.Configuration.GetConnectionString("UnivDBConnection");
+builder.Services.AddDbContext<UniversityDBContext>(options =>
+    options.UseSqlServer(UnivDBconnectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+DependencyContainer.RegisterServices(builder.Services);
 
 var app = builder.Build();
 
